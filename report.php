@@ -13,6 +13,8 @@ foreach($activities as $id => $activity){
 		continue;
 	if(!isset($activity->taskResponse))
 		continue;
+	if(!isset($decks[$activity->deck]))
+		continue;
 	$deck = $decks[$activity->deck];
 	$deckName = $deck->objectId;
 	$date = $activity->createdAt;
@@ -20,11 +22,19 @@ foreach($activities as $id => $activity){
 		$deckName = $deck->name;
 	$answers = Array();
 	foreach($activity->taskResponse as $taskId => $response_value){
+		if(is_array($response_value))
+			$response_value = json_encode($response_value);
+		// echo "$response_value<br>";
 		if(!isset($tasks[$taskId]))
 			continue;
 		$answers[] = Array($tasks[$taskId]->title,$response_value);
 	}
-	foreach($answers as $inded => $answer){
+	// echo $inst;
+	// echo $deckName;
+	// echo $date;
+	foreach($answers as $index=>$answer){
+		// echo $answer[0];
+		// echo $answer[1];
 		fputcsv($fp,Array($inst,$deckName,$date,$answer[0],$answer[1]));
 	}
 }
